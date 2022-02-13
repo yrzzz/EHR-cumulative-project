@@ -69,5 +69,5 @@ def sick_patients(
                 if float(data[i][3]) < value:
                     id.add(data[i][0])
             else:
-                print("Please input '<' or '>'")
+                raise ValueError("Please input '<' or '>' in second argument")
     return list(id)
