@@ -1,3 +1,5 @@
+import pytest
+
 from ehr_analysis import parse_data, num_older_than, sick_patients, first_admission_age
 
 
