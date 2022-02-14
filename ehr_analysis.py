@@ -73,7 +73,7 @@ def sick_patients(
     return list(id)
 
 
-def first_admission_age(patient_data: list[list[str]], lab_data: [list[list[str]]]):
+def first_admission_age(patient_data: list[list[str]], lab_data: list[list[str]]):
     """
     This function utilizes dictionary. First, construct a dictionary to store each patient ID as the key, and the list
     of admission date as value. Then, find the first admission date. Finally, use the birth date in the patient level
