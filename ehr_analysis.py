@@ -109,3 +109,4 @@ def first_admission_age(patient_data: list[list[str]], lab_data: list[list[str]]
         )
         first_ad_age[patient_id] = age
     return first_ad_age
+
