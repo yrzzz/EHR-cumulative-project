@@ -15,7 +15,7 @@ def test_parse_data():
             "1992-07-01 01:36:17.910",
         ],
     ]
-    assert parse_data("D:\Work\Duke\Biostat821\EHR cumulative project1/test.txt") == dat
+    assert parse_data("test.txt") == dat
 
 
 def test_num_older_than():
