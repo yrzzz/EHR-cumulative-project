@@ -7,7 +7,7 @@ clear when using attribute to select feature of each data.
 
 
 class Patient:
-    def __init__(self, ID, gender, DOB, race, MS, Language, PPBP):
+    def __init__(self, ID: str, gender: str, DOB: str, race: str, MS: str, Language: str, PPBP: str):
         self.ID = ID
         self.gender = gender
         self.DOB = DOB
@@ -17,7 +17,7 @@ class Patient:
         self.PPBP = PPBP
 
     @property
-    def age(self):
+    def age(self) -> int:
         today = datetime.today()
         born = datetime.strptime(self.DOB, "%Y-%m-%d %H:%M:%S.%f")
         return (
@@ -30,7 +30,7 @@ class Patient:
 
 class Lab:
     def __init__(
-        self, PatientID, AdmissionID, LabName, LabValue, LabUnits, LabDateTime
+        self, PatientID: str, AdmissionID: str, LabName: str, LabValue: str, LabUnits: str, LabDateTime: str
     ):
         self.PatientID = PatientID
         self.AdmissionID = AdmissionID
