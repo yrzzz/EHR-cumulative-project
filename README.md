@@ -1,12 +1,20 @@
 # EHR-cumulative-project-part-1
-## parse_data(filepath, data_type)
-For end users:
-1. Please input the path of the file and data type of data (Patient or Lab), and parse_data() will return a list of class objects, where each class object has attributes based on the dataset.
+
+## parse_patient_data(filepath)
+1. Please input the path of the file, and parse_patient_data() will return a list of Patient class objects.
 2. The elements in the input file must be seperated by spaces.
-3. Example: `parse_data("PatientCorePopulatedTable.txt", "Patient")`
+3. Example: `parse_data("PatientCorePopulatedTable.txt")`
 
 For contributors:
-1. Use test_lab.txt and test_patient.txt provided to test parse_data()
+1. Use test_patient.txt provided to test `parse_patient_data()`
+
+## parse_lab_data(filepath)
+1. Please input the path of the file, and parse_lab_data() will return a list of Lab class objects.
+2. The elements in the input file must be seperated by spaces.
+3. Example: `parse_data("LabsCorePopulatedTable.txt")`
+
+For contributors:
+1. Use test_lab.txt provided to test `parse_lab_data()`
 
 ## num_older_than(age, data)
 For end users:
