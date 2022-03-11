@@ -7,7 +7,16 @@ clear when using attribute to select feature of each data.
 
 
 class Patient:
-    def __init__(self, ID: str, gender: str, DOB: str, race: str, MS: str, Language: str, PPBP: str):
+    def __init__(
+        self,
+        ID: str,
+        gender: str,
+        DOB: str,
+        race: str,
+        MS: str,
+        Language: str,
+        PPBP: str,
+    ):
         self.ID = ID
         self.gender = gender
         self.DOB = DOB
@@ -30,7 +39,13 @@ class Patient:
 
 class Lab:
     def __init__(
-        self, PatientID: str, AdmissionID: str, LabName: str, LabValue: str, LabUnits: str, LabDateTime: str
+        self,
+        PatientID: str,
+        AdmissionID: str,
+        LabName: str,
+        LabValue: str,
+        LabUnits: str,
+        LabDateTime: str,
     ):
         self.PatientID = PatientID
         self.AdmissionID = AdmissionID
@@ -42,43 +57,41 @@ class Lab:
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
-
-def parse_data(filename: str, data_type: str) -> list[object]:
     """
     For this function, under each if statement, the compare takes one operation. Building a empty list takes one
     operation. Open the file takes one operation. If the file has N lines, reading each line takes N operations.
     Inside the for loop, there is 4 operations, so the whole loop takes 4N operations. So inside the if statement takes
     4N+2 operations. Return takes one operation. Thus, there are totally 4N+3 operations and the complexity is O(N).
     :param filename: The name or path of the file
-    :param data_type: Patient for reading patient-level data; Lab for reading lab-level data
     :return: A list of objects
     """
-    if data_type == "Patient":
-        object_list = []
-        with open(filename, "r") as file:
-            rows = file.readlines()
-            for i in range(1, len(rows)):
-                row = rows[i].strip()
-                row = row.split("\t")
-                patient = Patient(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6]
-                )
-                object_list.append(patient)
-    elif data_type == "Lab":
-        object_list = []
-        with open(filename, "r") as file:
-            rows = file.readlines()
-            for i in range(1, len(rows)):
-                row = rows[i].strip()
-                row = row.split("\t")
-                lab = Lab(row[0], row[1], row[2], row[3], row[4], row[5])
-                object_list.append(lab)
-    else:
-        raise ValueError("Please input 'Patient' or 'Lab' in data_type argument")
+
+
+def parse_patient_data(filename: str) -> list[Patient]:
+    object_list = []
+    with open(filename, "r") as file:
+        rows = file.readlines()
+        for i in range(1, len(rows)):
+            row = rows[i].strip()
+            row = row.split("\t")
+            patient = Patient(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+            object_list.append(patient)
     return object_list
 
 
-def num_older_than(age: float, data: list[object]) -> int:
+def parse_lab_data(filename: str) -> list[Lab]:
+    object_list = []
+    with open(filename, "r") as file:
+        rows = file.readlines()
+        for i in range(1, len(rows)):
+            row = rows[i].strip()
+            row = row.split("\t")
+            lab = Lab(row[0], row[1], row[2], row[3], row[4], row[5])
+            object_list.append(lab)
+    return object_list
+
+
+def num_older_than(age: float, data: list[Patient]) -> int:
     """
     This function receive a number and a list of objects. initializing the counting number takes one operation. In side
     the for loop, extracting the age of patients and comparing takes 2 operations. Updating the counting number takes 1
@@ -94,9 +107,7 @@ def num_older_than(age: float, data: list[object]) -> int:
     return num
 
 
-def sick_patients(
-    labname: str, gt_lt: str, value: float, data: list[object]
-) -> list[str]:
+def sick_patients(labname: str, gt_lt: str, value: float, data: list[Lab]) -> list[str]:
     """
     Setting a empty takes one operation. In the for loop, calculating the length of data minus 1 takes 2 operations.
     Getting the range takes 1 operation. Locating and comparing the lab name takes 2 operations. Comparing the notation
@@ -123,7 +134,7 @@ def sick_patients(
     return list(id)
 
 
-def first_admission_age(patient_data: list[object], lab_data: [list[object]]):
+def first_admission_age(patient_data: list[Patient], lab_data: [list[Lab]]):
     """
     This function utilizes dictionary. First, construct a dictionary to store each patient ID as the key, and the list
     of admission date as value. Then, find the first admission date. Finally, use the birth date in the patient level

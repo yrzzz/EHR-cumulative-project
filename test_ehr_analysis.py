@@ -1,7 +1,8 @@
 import pytest
 
 from ehr_analysis import (
-    parse_data,
+    parse_patient_data,
+    parse_lab_data,
     num_older_than,
     sick_patients,
     first_admission_age,
@@ -12,17 +13,7 @@ from ehr_analysis import (
 from datetime import datetime
 
 
-def test_parse_data():
-    dat_lab = [
-        Lab(
-            "1A8791E3-A61C-455A-8DEE-763EB90C9B2C",
-            "1",
-            "URINALYSIS: RED BLOOD CELLS",
-            "1.8",
-            "rbc/hpf",
-            "1992-07-01 01:36:17.910",
-        ),
-    ]
+def test_parse_patient_data():
     dat_patient = [
         Patient(
             "FB2ABB23-C9D0-4D09-8464-49BF0B982F0F",
@@ -34,26 +25,23 @@ def test_parse_data():
             "18.08",
         )
     ]
-    assert (
-        parse_data(
-            "test_lab.txt", "Lab"
-        )
-        == dat_lab
-    )
-    assert (
-        parse_data(
-            "test_patient.txt",
-            "Patient",
-        )
-        == dat_patient
-    )
-    with pytest.raises(ValueError):
-        (
-            parse_data(
-                "test_lab.txt", "Pat"
-            )
-            == dat_lab
-        )
+
+    assert parse_patient_data("test_patient.txt",) == dat_patient
+
+
+def test_parse_lab_data():
+    dat_lab = [
+        Lab(
+            "1A8791E3-A61C-455A-8DEE-763EB90C9B2C",
+            "1",
+            "URINALYSIS: RED BLOOD CELLS",
+            "1.8",
+            "rbc/hpf",
+            "1992-07-01 01:36:17.910",
+        ),
+    ]
+
+    assert parse_lab_data("test_lab.txt") == dat_lab
 
 
 def test_num_older_than():
