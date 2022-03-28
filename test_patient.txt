@@ -1,0 +1,2 @@
+PatientID	PatientGender	PatientDateOfBirth	PatientRace	PatientMaritalStatus	PatientLanguage	PatientPopulationPercentageBelowPoverty
+FB2ABB23-C9D0-4D09-8464-49BF0B982F0F	Male	1947-12-28 02:45:40.547	Unknown	Married	Icelandic	18.08

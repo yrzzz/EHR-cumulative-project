@@ -1,52 +1,113 @@
 from datetime import datetime
 
 """
-I choose to read the data as a list. As we need to analyze the data in the dataset, a list is a good choice since
-we can locate each element in a list of lists.
+I built two classes for patient-level data and lab-level data, and read the data as a list of class object. It will be
+clear when using attribute to select feature of each data.
 """
 
 
-def parse_data(filename: str) -> list[list[str]]:
+class Patient:
+    def __init__(
+        self,
+        ID: str,
+        gender: str,
+        DOB: str,
+        race: str,
+        MS: str,
+        Language: str,
+        PPBP: str,
+    ):
+        self.ID = ID
+        self.gender = gender
+        self.DOB = DOB
+        self.race = race
+        self.MS = MS
+        self.Language = Language
+        self.PPBP = PPBP
+
+    @property
+    def age(self) -> int:
+        today = datetime.today()
+        born = datetime.strptime(self.DOB, "%Y-%m-%d %H:%M:%S.%f")
+        return (
+            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+        )
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+
+class Lab:
+    def __init__(
+        self,
+        PatientID: str,
+        AdmissionID: str,
+        LabName: str,
+        LabValue: str,
+        LabUnits: str,
+        LabDateTime: str,
+    ):
+        self.PatientID = PatientID
+        self.AdmissionID = AdmissionID
+        self.LabName = LabName
+        self.LabValue = LabValue
+        self.LabUnits = LabUnits
+        self.LabDateTime = LabDateTime
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
     """
-    For this function, open a file takes one operation. If the file has N lines, reading each line takes N operations.
-    Setting up a empty list takes one operation. Inside the for loop, there is 3 operations, so the whole loop takes 3N
-    operations. Return takes 1 operation. So the whole function takes 4n+3 steps and the complexity is O(N).
+    For this function, under each if statement, the compare takes one operation. Building a empty list takes one
+    operation. Open the file takes one operation. If the file has N lines, reading each line takes N operations.
+    Inside the for loop, there is 4 operations, so the whole loop takes 4N operations. So inside the if statement takes
+    4N+2 operations. Return takes one operation. Thus, there are totally 4N+3 operations and the complexity is O(N).
+    :param filename: The name or path of the file
+    :return: A list of objects
     """
+
+
+def parse_patient_data(filename: str) -> list[Patient]:
+    object_list = []
     with open(filename, "r") as file:
         rows = file.readlines()
-        lists = []
-        for row in rows:
-            row = row.strip()
-            row = row.split("\t")  # type: ignore
-            lists.append(row)
-        return lists
+        for i in range(1, len(rows)):
+            row = rows[i].strip()
+            row = row.split("\t")
+            patient = Patient(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+            object_list.append(patient)
+    return object_list
 
 
-def num_older_than(age: float, data: list[list[str]]) -> int:
+def parse_lab_data(filename: str) -> list[Lab]:
+    object_list = []
+    with open(filename, "r") as file:
+        rows = file.readlines()
+        for i in range(1, len(rows)):
+            row = rows[i].strip()
+            row = row.split("\t")
+            lab = Lab(row[0], row[1], row[2], row[3], row[4], row[5])
+            object_list.append(lab)
+    return object_list
+
+
+def num_older_than(age: float, data: list[Patient]) -> int:
     """
-    This function receive a number and a list of lists. Setting the time of today takes one operation. Setting the
-    counting number takes one operation. In side the for loop, calculating the length of data minus 1 takes 2 operations
-    getting the range takes 1 operation. Locating the string takes 1 operation and transforming the string to date takes
-    1 operation. In the if statement, it takes 12 operations. Returning the result takes one operation. Thus, the total
-    steps we need is 14N+6. So the total computational complexity is O(N)
+    This function receive a number and a list of objects. initializing the counting number takes one operation. In side
+    the for loop, extracting the age of patients and comparing takes 2 operations. Updating the counting number takes 1
+    operation. Returning takes 1 operation. The total operations are 3M+2. So the total computational complexity is O(M)
     :param age: The age you want to compare.
-    :param data: The dataset like PatientCorePopulatedTable.txt.
+    :param data: A list of Patient objects.
     :return: The number of people who is older than the given age.
     """
-    today = datetime.today()
     num = 0
-    for i in range(1, len(data)):
-        born = datetime.strptime(data[i][2], "%Y-%m-%d %H:%M:%S.%f")
-        if (
-            today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        ) > age:
+    for patient in data:
+        if patient.age > age:
             num += 1
     return num
 
 
-def sick_patients(
-    lab: str, gt_lt: str, value: float, data: list[list[str]]
-) -> list[str]:
+def sick_patients(labname: str, gt_lt: str, value: float, data: list[Lab]) -> list[str]:
     """
     Setting a empty takes one operation. In the for loop, calculating the length of data minus 1 takes 2 operations.
     Getting the range takes 1 operation. Locating and comparing the lab name takes 2 operations. Comparing the notation
@@ -56,37 +117,37 @@ def sick_patients(
     :param lab: Lab name you want ot choose
     :param gt_lt: < or >
     :param value: The value of the lab
-    :param data: Dateset of the data like LabsCorePopulatedTable.txt
+    :param data: A list of Lab objects
     :return: The list of patient id that was regarded as sick
     """
     id = set()
-    for i in range(1, len(data)):
-        if data[i][2] == lab:
+    for lab in data:
+        if lab.LabName == labname:
             if gt_lt == ">":
-                if float(data[i][3]) > value:
-                    id.add(data[i][0])
+                if float(lab.LabValue) > value:
+                    id.add(lab.PatientID)
             elif gt_lt == "<":
-                if float(data[i][3]) < value:
-                    id.add(data[i][0])
+                if float(lab.LabValue) < value:
+                    id.add(lab.PatientID)
             else:
                 raise ValueError("Please input '<' or '>' in second argument")
     return list(id)
 
 
-def first_admission_age(patient_data: list[list[str]], lab_data: list[list[str]]):
+def first_admission_age(patient_data: list[Patient], lab_data: [list[Lab]]):
     """
     This function utilizes dictionary. First, construct a dictionary to store each patient ID as the key, and the list
     of admission date as value. Then, find the first admission date. Finally, use the birth date in the patient level
     data to calculate the age of first admission
 
-    :param patient_data: Patient level data
-    :param lab_data: Lab level data
+    :param patient_data: A list of Patient-level objects
+    :param lab_data: A list of Lan-level objects
     :return: A dictionary which keys are patients' ID, values are the age at their first admission
     """
     first_ad_age = {}
     result_dict = {}
-    for i in range(1, len(lab_data)):
-        dict_a = {lab_data[i][0]: lab_data[i][5]}
+    for lab in lab_data:
+        dict_a = {lab.PatientID: lab.LabDateTime}
         key = list(dict_a.keys())[0]
         if key not in result_dict:
             result_dict[key] = []
@@ -98,9 +159,9 @@ def first_admission_age(patient_data: list[list[str]], lab_data: list[list[str]]
                 datetime.strptime(dict_a[key], "%Y-%m-%d %H:%M:%S.%f")
             )
 
-    for i in range(1, len(patient_data)):
-        patient_id = patient_data[i][0]
-        born = datetime.strptime(patient_data[i][2], "%Y-%m-%d %H:%M:%S.%f")
+    for patient in patient_data:
+        patient_id = patient.ID
+        born = datetime.strptime(patient.DOB, "%Y-%m-%d %H:%M:%S.%f")
         first_ad_date = min(result_dict[patient_id])
         age = (
             first_ad_date.year
@@ -109,4 +170,3 @@ def first_admission_age(patient_data: list[list[str]], lab_data: list[list[str]]
         )
         first_ad_age[patient_id] = age
     return first_ad_age
-
