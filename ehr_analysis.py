@@ -7,7 +7,6 @@ I built two classes for patient-level data and lab-level data, and read the data
 
 
 class Patient:
-
     def __init__(self, db_location):
         """Initialize db class variables"""
         self.db_location = db_location
@@ -28,45 +27,9 @@ class Patient:
     def commit(self):
         """commit changes to database"""
         self.connection.commit()
-
-    @property
-    def id(self):
-        rows = self.cur.execute("SELECT ID FROM Patient")
-        return rows
-
-    @property
-    def gender(self):
-        rows = self.cur.execute("SELECT gender FROM Patient")
-        return rows
-
-    @property
-    def DOB(self):
-        rows = self.cur.execute("SELECT DOB FROM Patient")
-        return rows
-
-    @property
-    def race(self):
-        rows = self.cur.execute("SELECT race FROM Patient")
-        return rows
-
-    @property
-    def MS(self):
-        rows = self.cur.execute("SELECT MS FROM Patient")
-        return rows
-
-    @property
-    def Language(self):
-        rows = self.cur.execute("SELECT Language FROM Patient")
-        return rows
-
-    @property
-    def PPBP(self):
-        rows = self.cur.execute("SELECT PPBP FROM Patient")
-        return rows
 
 
 class Lab:
-
     def __init__(self, db_location):
         """Initialize db class variables"""
         self.db_location = db_location
@@ -87,36 +50,6 @@ class Lab:
     def commit(self):
         """commit changes to database"""
         self.connection.commit()
-
-    @property
-    def PatientID(self):
-        rows = self.cur.execute("SELECT PatientID FROM Lab")
-        return rows
-
-    @property
-    def AdmissionID(self):
-        rows = self.cur.execute("SELECT AdmissionID FROM Lab")
-        return rows
-
-    @property
-    def LabName(self):
-        rows = self.cur.execute("SELECT LabName FROM Lab")
-        return rows
-
-    @property
-    def LabValue(self):
-        rows = self.cur.execute("SELECT LabValue FROM Lab")
-        return rows
-
-    @property
-    def LabUnits(self):
-        rows = self.cur.execute("SELECT LabUnits FROM Lab")
-        return rows
-
-    @property
-    def LabDateTime(self):
-        rows = self.cur.execute("SELECT LabDateTime FROM Lab")
-        return rows
 
 
 def store_patient_to_db(filename: str, db_location: str):
@@ -197,7 +130,7 @@ def sick_patients(labname: str, gt_lt: str, value: float, data: Lab) -> list[str
     return list(set(patient_id))
 
 
-def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple]:
+def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple[str]]:
 
     first_admit_age = lab_data.execute(
         """SELECT ID, min(date(LabDateTime) - date(DOB)) as first_admit_age 
@@ -208,3 +141,8 @@ def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple]:
         GROUP BY ID"""
     )
     return list(first_admit_age)
+
+
+patient = Patient("EHR.db")
+for i in patient.DOB:
+    print(i)
