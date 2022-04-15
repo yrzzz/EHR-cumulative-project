@@ -130,7 +130,7 @@ def sick_patients(labname: str, gt_lt: str, value: float, data: Lab) -> list[str
     return list(set(patient_id))
 
 
-def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple[str]]:
+def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple[str, int]]:
 
     first_admit_age = lab_data.execute(
         """SELECT ID, min(date(LabDateTime) - date(DOB)) as first_admit_age 
@@ -141,8 +141,3 @@ def first_admission_age(patient_data: Patient, lab_data: Lab) -> list[tuple[str]
         GROUP BY ID"""
     )
     return list(first_admit_age)
-
-
-patient = Patient("EHR.db")
-for i in patient.DOB:
-    print(i)
